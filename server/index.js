@@ -17,12 +17,26 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 passport.use(new Auth0Strategy({
-  domain:'',
-  clientID:'',
-  clientSecret:'',
-  callbackURL:''
+  domain: process.env.AUTH_DOMAIN,
+  clientID: process.env.CLIENT_ID,
+  clientSecret: process.env.CLIENT_SECRET,
+  callbackURL: process.env.AUTH_CALLBACK
 }, function(accessToken, refreshToken, extraParams, profile, done){
+  console.log(profile);
+  done(null, profile);
+}))
 
+passport.serializeUser(function (profile, done) {
+  done(null, profile);
+})
+passport.deserializeUser(function (profile, done) {
+  done(null, profile);
+})
+
+app.get('/auth', passport.authenticate('auth0'));
+app.get('/auth/callback', passport.authenticate('auth0',{
+  successRedirect:'http://localhost:3000',
+  failureRedirect: '/auth'
 }))
 
 
